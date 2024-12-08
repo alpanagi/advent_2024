@@ -7,8 +7,8 @@ char map[MAP_HEIGHT][MAP_WIDTH];
 
 enum class Direction { Up, Down, Left, Right };
 struct GuardTransform {
-  int col;
   int row;
+  int col;
   Direction direction;
 };
 
@@ -23,17 +23,17 @@ void read_map() {
 }
 
 GuardTransform find_guard_transform() {
-  for (int col = 0; col < MAP_HEIGHT; col++) {
-    for (int row = 0; row < MAP_WIDTH; row++) {
-      switch (map[col][row]) {
+  for (int row = 0; row < MAP_HEIGHT; row++) {
+    for (int col = 0; col < MAP_WIDTH; col++) {
+      switch (map[row][col]) {
       case '^':
-        return GuardTransform{col, row, Direction::Up};
+        return GuardTransform{row, col, Direction::Up};
       case '<':
-        return GuardTransform{col, row, Direction::Left};
+        return GuardTransform{row, col, Direction::Left};
       case '>':
-        return GuardTransform{col, row, Direction::Right};
+        return GuardTransform{row, col, Direction::Right};
       case 'v':
-        return GuardTransform{col, row, Direction::Down};
+        return GuardTransform{row, col, Direction::Down};
       }
     }
   }
@@ -45,20 +45,20 @@ GuardTransform calculate_next_transform(GuardTransform tran) {
   GuardTransform next_tran = tran;
   switch (tran.direction) {
   case Direction::Up:
-    next_tran.col = tran.col - 1;
-    next_tran.row = tran.row;
+    next_tran.row = tran.row - 1;
+    next_tran.col = tran.col;
     break;
   case Direction::Down:
-    next_tran.col = tran.col + 1;
-    next_tran.row = tran.row;
+    next_tran.row = tran.row + 1;
+    next_tran.col = tran.col;
     break;
   case Direction::Left:
-    next_tran.col = tran.col;
-    next_tran.row = tran.row - 1;
+    next_tran.row = tran.row;
+    next_tran.col = tran.col - 1;
     break;
   case Direction::Right:
-    next_tran.col = tran.col;
-    next_tran.row = tran.row + 1;
+    next_tran.row = tran.row;
+    next_tran.col = tran.col + 1;
     break;
   }
 
@@ -66,8 +66,8 @@ GuardTransform calculate_next_transform(GuardTransform tran) {
 }
 
 bool has_guard_exited(GuardTransform tran) {
-  return tran.row < 0 || tran.row == MAP_WIDTH || tran.col < 0 ||
-         tran.col == MAP_HEIGHT;
+  return tran.row < 0 || tran.row == MAP_HEIGHT || tran.col < 0 ||
+         tran.col == MAP_WIDTH;
 }
 
 GuardTransform move_guard(GuardTransform tran) {
@@ -76,7 +76,7 @@ GuardTransform move_guard(GuardTransform tran) {
     return next_tran;
   }
 
-  while (map[next_tran.col][next_tran.row] == '#') {
+  while (map[next_tran.row][next_tran.col] == '#') {
     switch (next_tran.direction) {
     case Direction::Up:
       tran.direction = Direction::Right;
@@ -105,14 +105,14 @@ int main() {
   auto tran = find_guard_transform();
 
   while (!has_guard_exited(tran)) {
-    map[tran.col][tran.row] = 'X';
+    map[tran.row][tran.col] = 'X';
     tran = move_guard(tran);
   }
 
   int count = 0;
-  for (int col = 0; col < MAP_HEIGHT; col++) {
-    for (int row = 0; row < MAP_HEIGHT; row++) {
-      if (map[col][row] == 'X') {
+  for (int row = 0; row < MAP_HEIGHT; row++) {
+    for (int col = 0; col < MAP_WIDTH; col++) {
+      if (map[row][col] == 'X') {
         count++;
       }
     }
