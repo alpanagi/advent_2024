@@ -51,13 +51,18 @@ int main() {
             continue;
           }
 
+          if (row == antennas[i].row && col == antennas[i].col &&
+              antennas[i].val == antennas[j].val) {
+            locations.insert(row * 1000 + col);
+            continue;
+          }
+
           double distance_i = distance(row, col, antennas[i]);
           double distance_j = distance(row, col, antennas[j]);
           double dot_prod = (antennas[i].row - row) * (antennas[j].row - row) +
                             (antennas[i].col - col) * (antennas[j].col - col);
           if (antennas[i].val == antennas[j].val && distance_i > EPSILON &&
               distance_j > EPSILON &&
-              std::abs(distance_i - 2 * distance_j) < EPSILON &&
               std::abs(dot_prod - distance_i * distance_j) < EPSILON) {
             locations.insert(row * 1000 + col);
           }
@@ -65,5 +70,6 @@ int main() {
       }
     }
   }
+
   std::cout << locations.size() << std::endl;
 }
